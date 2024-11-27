@@ -26,6 +26,8 @@ model Course {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
 }
 
 model Category {
@@ -60,7 +62,7 @@ model Chapter {
   courseId String
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  userProgress UserPogress[]
+  userProgress UserProgress[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,20 +80,20 @@ model MuxData {
   chapter Chapter @relation(fields: [chapterId], references:[id], onDelete:Cascade)
 }
 
-model UserPogress {
+model UserProgress {
   id String @id @default(uuid())
   userId String
 
   chapterId String
   chapter Chapter @relation(fields:[chapterId], references: [id], onDelete: Cascade)
 
- isCompleted DateTime @default(now())
+  isCompleted Boolean @default(false)
 
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
- @@index([chapterId])
- @@unique([userId, chapterId])
+  @@index([chapterId])
+  @@unique([userId, chapterId])
 }
 
 model Purchase {

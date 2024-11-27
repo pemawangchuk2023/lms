@@ -14,11 +14,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PlusCircle } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { Chapter, Course } from '@prisma/client';
 import ChaptersList from '@/app/(dashboard)/_components/chapters-list';
 import ConfirmationDialog from './confirmation-dialog';
@@ -35,7 +33,6 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
-  const router = useRouter();
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
@@ -62,12 +59,10 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
   const onSubmit = async (values: FormValues) => {
     try {
       if (editingChapter) {
-        // Update existing chapter
-        await axios.put(
-          `/api/courses/${courseId}/chapters/${editingChapter.id}`,
-          values
-        );
-        // Update the chapters state
+        await axios.put(`/api/courses/${courseId}/chapters/edit`, {
+          id: editingChapter.id,
+          ...values,
+        });
         setChapters((prevChapters) =>
           prevChapters.map((chapter) =>
             chapter.id === editingChapter.id
@@ -126,10 +121,9 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
   const confirmDelete = async () => {
     if (chapterToDelete) {
       try {
-        await axios.delete(
-          `/api/courses/${courseId}/chapters/${chapterToDelete.id}`
-        );
-        // Remove the chapter from state
+        await axios.delete(`/api/courses/${courseId}/chapters/delete`, {
+          data: { id: chapterToDelete.id },
+        });
         setChapters((prevChapters) =>
           prevChapters.filter((chapter) => chapter.id !== chapterToDelete.id)
         );
@@ -161,7 +155,6 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
       await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
         updates: updateData,
       });
-      // Update the chapters state with new order
       setChapters(updatedChapters);
       toast({
         variant: 'default',
@@ -211,6 +204,7 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
             onDelete={handleDelete}
             onReorder={handleReorder}
             items={chapters}
+            courseId={courseId}
           />
         )}
 

@@ -1,5 +1,4 @@
-'use client';
-
+import Link from 'next/link';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Grid, Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,6 +15,7 @@ interface ChaptersListProps {
     updateData: { id: string; position: number }[],
     updatedChapters: Chapter[]
   ) => void;
+  courseId: string;
 }
 
 const ChaptersList = ({
@@ -23,6 +23,7 @@ const ChaptersList = ({
   onEdit,
   onDelete,
   onReorder,
+  courseId,
 }: ChaptersListProps) => {
   const [chapters, setChapters] = useState<Chapter[]>(items);
 
@@ -82,9 +83,12 @@ const ChaptersList = ({
                       <Grid className='h-5 w-5 text-slate-500' />
                     </div>
                     <div className='flex-1 px-4'>
-                      <p className='font-medium text-slate-700'>
+                      <Link
+                        href={`/teacher/courses/${courseId}/chapters/${chapter.id}`}
+                        className='font-medium text-slate-700 hover:underline'
+                      >
                         {chapter.title}
-                      </p>
+                      </Link>
                     </div>
                     <div className='ml-auto pr-2 flex items-center gap-x-2'>
                       {chapter.isFree && <Badge>Free</Badge>}

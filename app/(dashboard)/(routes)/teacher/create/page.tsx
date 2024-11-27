@@ -57,46 +57,70 @@ const Create = () => {
 
   return (
     <div className='max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6'>
-      <div>
-        <h1 className='text-2xl'>Name your course</h1>
-        <p className='text-sm text-slate-600'>
-          What would like to name your course?
+      <div className='w-full max-w-md bg-white shadow-md rounded-lg border border-gray-100 p-6'>
+        <h1 className='text-2xl font-semibold text-gray-800 mb-2 text-center'>
+          Name your course
+        </h1>
+        <p className='text-sm text-gray-600 mb-6 text-center'>
+          What would you like to name your course?
         </p>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='space-y-8'
+            className='space-y-6'
           >
             <FormField
               control={form.control}
               name='title'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel> Course Title</FormLabel>
+                  <FormLabel className='text-gray-700 font-medium'>
+                    Course Title
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder='Smart Contract'
                       {...field}
                       disabled={isSubmitting}
+                      className='w-full transition-all duration-200 
+                        focus:ring-2 focus:ring-blue-200 
+                        focus:border-blue-500
+                        disabled:opacity-50 disabled:cursor-not-allowed'
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className='text-xs text-gray-900 mt-1'>
                     What will you teach in this course?
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className='text-red-500 text-xs mt-1' />
                 </FormItem>
               )}
             />
-            <div className='flex items-center gap-x-2'>
-              <Link href='/'>
+
+            <div className='flex items-center space-x-4'>
+              <Link
+                href='/'
+                className='w-full'
+              >
                 <Button
-                  variant='ghost'
+                  variant='outline'
                   type='button'
+                  className='w-full text-gray-600 hover:bg-gray-50'
                 >
                   Cancel
                 </Button>
               </Link>
-              <Button type='button'>Continue</Button>
+              <Button
+                type='submit'
+                disabled={!isValid || isSubmitting}
+                className='w-full bg-blue-500 text-white 
+                  hover:bg-blue-700 
+                  disabled:opacity-50 
+                  disabled:cursor-not-allowed 
+                  transition-colors duration-200'
+              >
+                Continue
+              </Button>
             </div>
           </form>
         </Form>

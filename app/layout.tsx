@@ -8,6 +8,7 @@ import {
   SignInButton,
   UserButton,
 } from '@clerk/nextjs';
+import { ConfettiProvider } from '@/components/providers/confetti-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,7 +30,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang='en'>
-        <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+        <body
+          suppressHydrationWarning={true}
+          className={`${inter.variable} ${spaceGrotesk.variable}`}
+        >
+          <ConfettiProvider />
           <header>
             <SignedOut>
               <SignInButton />

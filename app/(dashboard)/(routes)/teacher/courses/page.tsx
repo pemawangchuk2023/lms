@@ -1,33 +1,31 @@
-'use client';
+import React from 'react';
+import { DataTable } from './_components/data-table';
+import { columns } from './_components/columns';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import { db } from '@/lib/db';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+const Courses = async () => {
+  const { userId } = await auth();
 
-const Courses = () => {
-  const [isCreated, setIsCreated] = useState(false);
+  if (!userId) {
+    return redirect('/');
+  }
+
+  const courses = await db.course.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
   return (
-    <div className='container mx-auto px-4 py-6'>
-      <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-2xl font-bold text-gray-800'>
-          These Are Your Courses
-        </h1>
-        <Link
-          href='/teacher/create'
-          passHref
-        >
-          <Button className='flex items-center gap-2'>
-            <PlusCircle className='w-5 h-5' />
-            Create New Course
-          </Button>
-        </Link>
-      </div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-        <p className='text-green-500 text-center col-span-full'>
-          No courses created yet. Click "Create New Course" to get started.
-        </p>
-      </div>
+    <div className='p-6'>
+      <DataTable
+        columns={columns}
+        data={courses}
+      />
     </div>
   );
 };

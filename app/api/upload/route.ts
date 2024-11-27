@@ -5,6 +5,7 @@ import { getCloudinaryConfig } from '@/lib/cloudinary';
 export async function POST(request: Request) {
   const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
 
+  // Configure Cloudinary
   cloudinary.config({
     cloud_name: cloudName,
     api_key: apiKey,
@@ -22,20 +23,27 @@ export async function POST(request: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const result = await new Promise((resolve, reject) => {
+    // Determine resource type based on MIME type
+    const resourceType = file.type.startsWith('video/') ? 'video' : 'image';
+
+    // Upload the file to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({}, (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        })
+        .upload_stream(
+          { resource_type: resourceType, timeout: 300000 },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        )
         .end(buffer);
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(uploadResult);
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
     return NextResponse.json(
-      { error: 'Error uploading image' },
+      { error: 'Failed to upload file', details: error },
       { status: 500 }
     );
   }
